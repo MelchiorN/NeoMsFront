@@ -60,7 +60,7 @@
               </div>
               <div class="flex-1">
                 <p class="text-white ">Tableau de bord</p>
-                <p class="text-white text-xs opacity-70 font-medium">Vue d'ensemble</p>
+                <p class="text-white nav-description text-xs opacity-70 font-medium">Vue d'ensemble</p>
               </div>
             </router-link>
 
@@ -173,8 +173,142 @@
                 </div>
               </transition>
             </div>
-            
+            <div class="nav-section">
+              <button
+                @click="toggleSection('tenders')"
+                class="w-full nav-section-header"
+                :class="{ 'nav-section-header-active': expandedSections.tenders }"
+              >
+                <div class="flex items-center justify-between w-full">
+                  <h3 class="nav-section-title">Appels d'Offres</h3>
+                  <svg
+                    class="w-4 h-4 transition-transform duration-200"
+                    :class="{ 'rotate-180': expandedSections.tenders }"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    ></path>
+                  </svg>
+                </div>
+              </button>
+
+              <transition name="slide-down">
+                <div v-show="expandedSections.tenders" class="mt-2 space-y-1">
+                  <router-link
+                    to="/tenders"
+                    class="nav-item nav-item-nested"
+                    :class="{ 'nav-item-active': $route.path === '/tenders' }"
+                  >
+                    <div class="nav-icon">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2v16m14 0h2m-2 0h-4m-5 0H3m2 0v-3.5a1.5 1.5 0 00-1.5-1.5h0a1.5 1.5 0 00-1.5 1.5V21"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-white">Appels d'Offres</p>
+                      <p class="text-white text-xs font-medium opacity-70 ">Gestion & soumissions</p>
+                    </div>
+                  </router-link>
+
+                  <router-link
+                    to="/tenders/documents"
+                    class="nav-item nav-item-nested"
+                    :class="{ 'nav-item-active': $route.path === '/tenders/documents' }"
+                  >
+                    <div class="nav-icon">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-white">Documents</p>
+                      <p class="text-white text-xs font-medium opacity-70">Dossiers & pièces jointes</p>
+                    </div>
+                  </router-link>
+
+                  <router-link
+                    to="/tenders/submissions"
+                    class="nav-item nav-item-nested"
+                    :class="{ 'nav-item-active': $route.path === '/tenders/submissions' }"
+                  >
+                    <div class="nav-icon">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-white">Soumissions</p>
+                      <p class="text-white text-xs opacity-70 font-medium">Envoi & suivi résultats</p>
+                    </div>
+                  </router-link>
+
+                  <router-link
+                    to="/tenders/projects"
+                    class="nav-item nav-item-nested"
+                    :class="{ 'nav-item-active': $route.path === '/tenders/projects' }"
+                  >
+                    <div class="nav-icon">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-white ">Pilotage Projet</p>
+                      <p class=" text-white text-xs opacity-70 font-medium">Tâches & planning</p>
+                    </div>
+                  </router-link>
+                </div>
+              </transition>
+            </div>
+
+            <router-link
+              to="/suppliers"
+              class="nav-item"
+              :class="{ 'nav-item-active': $route.path === '/suppliers' }"
+            >
+              <div class="nav-icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2v16l3.5-2 3.5 2 3.5-2 3.5 2z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p class="text-white">Fournisseurs</p>
+                <p class="text-white text-xs opacity-70 font-medium">Gestion achats</p>
+              </div>
+            </router-link>
           </div>
+      
         </nav>
    
       </div>
@@ -368,6 +502,7 @@ onUnmounted(() => {
 }
 
 
+
 /* Icon container styling */
 .nav-icon {
   @apply p-2 rounded-lg  bg-gray-100;
@@ -387,14 +522,16 @@ onUnmounted(() => {
   @apply w-full px-4 py-2 text-left rounded-lg transition-all duration-200;
   @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900;
   @apply focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-2 focus:ring-green-500/50;
+  @apply hover:bg-indigo-300;
 }
+
 
 .nav-section-header-active {
   @apply bg-indigo-400 text-gray-900;
 }
 
 .nav-section-title {
-  @apply text-xs font-bold text-gray-500 uppercase tracking-wider border-b-0;
+  @apply text-xs font-bold text-white uppercase  border-b-0;
 }
 
 
