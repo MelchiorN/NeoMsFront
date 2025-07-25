@@ -111,7 +111,6 @@
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
         ></textarea>
       </div>
-
       <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
         <button
           type="button"

@@ -130,6 +130,26 @@
                   </router-link>
 
                   <router-link
+                    to="/infocommande"
+                    class="nav-item nav-item-nested"
+                    :class="{ 'nav-item-active': $route.path === '/infocommande' }"
+                  >
+                    <div class="nav-icon">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-white ">Commandes</p>
+                      <p class="text-white text-xs opacity-70 font-medium">Suivi des ventes</p>
+                    </div>
+                  </router-link>
+                  <router-link
                     to="/commande"
                     class="nav-item nav-item-nested"
                     :class="{ 'nav-item-active': $route.path === '/commande' }"
@@ -146,7 +166,7 @@
                     </div>
                     <div class="flex-1">
                       <p class="text-white ">Commandes</p>
-                      <p class="text-white text-xs opacity-70 font-medium">Suivi des ventes</p>
+                      <p class="text-white text-xs opacity-70 font-medium">Enregistrer</p>
                     </div>
                   </router-link>
 
@@ -170,6 +190,24 @@
                       <p class="text-white text-xs opacity-50 font-medium">Facturation client</p>
                     </div>
                   </router-link>
+                  <NuxtLink to="/recapfacture" class="nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/recapfacture' }">
+                      <div class="nav-icon">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2v16l3.5-2 3.5 2 3.5-2 3.5 2z"
+                          ></path>
+                        </svg>
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-white ">Factures</p>
+                        <p class="text-white text-xs opacity-50 font-medium">Recap facture</p>
+                      </div>
+                    
+                  </NuxtLink>
+          
                 </div>
               </transition>
             </div>
