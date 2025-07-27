@@ -205,8 +205,21 @@
                         <p class="text-white ">Factures</p>
                         <p class="text-white text-xs opacity-50 font-medium">Recap facture</p>
                       </div>
-                    
                   </NuxtLink>
+                  <NuxtLink to="/livraison" class=" nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/livraison' }">
+                    <div class="nav-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm12 0a2 2 0 11-4 0 2 2 0 014 0zm-4-2V6a1 1 0 00-1-1H3a1 1 0 00-1 1v9a1 1 0 001 1h1a4 4 0 008 0h4a4 4 0 008 0h1a1 1 0 001-1v-4a1 1 0 00-1-1h-3z"/>
+                        </svg>
+
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-white ">Livraison</p>
+                        <p class="text-white text-xs opacity-50 font-medium">Bordereau de livraison</p>
+                      </div>
+
+                  </NuxtLink>
+                    
           
                 </div>
               </transition>
