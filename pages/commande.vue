@@ -47,12 +47,12 @@
         </thead>
         <tbody>
           <tr  v-for="(item, index) in form.items" :key="index">
-            <td class="border border-gray-200 text-center"><input v-model="item.name"  /></td>
-            <td class="border border-gray-200 text-center"><input type="number" v-model.number="item.qty" min="1" class="w-full" /></td>
-            <td class="border border-gray-200  text-center"><input type="number" v-model.number="item.price" step="1" /></td>
-            <td class="border border-gray-200 text-center">{{ (item.qty * item.price) }} FCFA</td>
-            <td class="border border-gray-200 text-center">
-              <button @click="removeItem(index)" class="text-red-500">  <i class="fa fa-trash" aria-hidden="true"></i>
+            <td class="border border-gray-200 "><input v-model="item.name" class="w-full text-center" /></td>
+            <td class="border border-gray-200 "><input type="number" v-model.number="item.qty" min="1" class="w-full text-center" /></td>
+            <td class="border border-gray-200 "><input type="number" v-model.number="item.price" step="1" class="w-full text-center" /></td>
+            <td class="border border-gray-200 ">{{ (item.qty * item.price) }} FCFA</td>
+            <td class="border border-gray-200 ">
+              <button @click="removeItem(index)" class="text-red-500 text-center">  <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
             </td>
           </tr>
@@ -63,19 +63,9 @@
 
     <!-- Totaux -->
 <div class="p-4 rounded-lg">
-  <div class="flex justify-end mb-3">
-    <label class="mr-2 text-gray-700 font-medium">Taux TVA (%) :</label>
-    <input 
-      type="number" 
-      v-model.number="tvaRate" 
-      min="0" max="100" step="1"
-      class="w-24 border rounded-md p-1 text-right"
-    />
-  </div>
-  
   <div class="text-right">
     <p>Sous-total : <span class="font-semibold">{{ subtotal }} FCFA</span></p>
-    <p>TVA ({{ tvaRate }}%) : <span class="font-semibold">{{ tvaAmount }} FCFA</span></p>
+    <p>TVA ({{taux}}%) : <span class="font-semibold">{{ tvaAmount }} FCFA</span></p>
     <p class="text-lg font-bold">Total TTC : {{ total }} FCFA</p>
   </div>
 </div>
@@ -134,9 +124,9 @@ const isSubmitting = ref(false)
 
 // calcul des totaux
 const subtotal = computed(() => form.value.items.reduce((sum, i) => sum + (i.qty * i.price), 0))
-const tvaAmount = computed(() => subtotal.value * 0.2)
+const tvaAmount = computed(() => subtotal.value * taux/100)
 const total = computed(() => subtotal.value + tvaAmount.value)
-
+const taux=18
 // Préremplissage quand une proforma est sélectionnée
 watch(selectedQuote, (newVal) => {
   if (!newVal) {

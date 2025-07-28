@@ -46,14 +46,12 @@
         <table class="min-w-full border border-gray-400 rounded-lg">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Livraison</th>
-              <th scope="col" class="border border-gray-400 relative px-6 py-3 text-center">
-                Actions
-              </th>
+              <th scope="col" class="border border-gray-400 px-6 py-3 text-center   text-gray-900 uppercase tracking-wider">ID</th>
+              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Client</th>
+              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Statut</th>
+              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Montant</th>
+              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Livraison</th>
+              <th scope="col" class="border border-gray-400 relative px-6 py-3 text-center"> Actions </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -63,13 +61,13 @@
               class="hover:bg-gray-50 transition duration-150 ease-in-out"
             >
               <td class="border border-gray-400 px-6 py-4  text-sm font-medium text-gray-900">{{ order.id }}</td>
-              <td class="border border-gray-400 px-6 py-4  text-sm text-gray-700">{{ order.client }}</td>
+              <td class="border border-gray-400 px-6 py-4  text-[16px] text-gray-900">{{ order.client }}</td>
               <td class="border border-gray-400 px-6 py-4 ">
-                <span :class="['px-2 inline-flex text-xs leading-5 font-semibold rounded-full', statusBadgeClass(order.status)]">{{ order.status }}</span>
+                <span :class="['px-2 inline-flex text-[16px] leading-5 font-semibold rounded-full', statusBadgeClass(order.status)]">{{ order.status }}</span>
               </td>
-              <td class="border border-gray-400 border border-gray-400 px-6 py-4  text-sm text-gray-700">{{ formatCurrency(order.amount) }}</td>
-              <td class="border border-gray-400 px-6 py-4  text-sm text-gray-700">{{ formatDate(order.delivery) }}</td>
-              <td class="border border-gray-400 px-6 py-4  text-center text-sm font-medium">
+              <td class="border border-gray-400 border border-gray-400 px-6 py-4  text-sm text-gray-900">{{ formatCurrency(order.amount) }}</td>
+              <td class="border border-gray-400 px-6 py-4  text-sm text-gray-900">{{ formatDate(order.delivery) }}</td>
+              <td class="border border-gray-400 px-6 py-4  text-center text-[16px] font-medium">
                 <div class="flex items-center justify-center space-x-2">
                   <!-- voir -->
                   <div class="relative group">

@@ -108,7 +108,7 @@
 
               <transition name="slide-down">
                 <div v-show="expandedSections.sales" class="mt-2 pace-y-1">
-                  <router-link
+                  <NuxtLink
                     to="/proposition"
                     class="nav-item nav-item-nested"
                     :class="{ 'nav-item-active': $route.path === '/proposition' }"
@@ -124,15 +124,15 @@
                       </svg>
                     </div>
                     <div class="flex-1">
-                      <p class="text-white ">Propositions commerciales</p>
-                      <p class="text-white text-xs opacity-70 font-medium">Propositions commerciales</p>
+                      <p class="text-white ">Proforma</p>
+                      <p class="text-white text-xs opacity-70 font-medium">Propositions</p>
                     </div>
-                  </router-link>
+                  </NuxtLink>
 
-                  <router-link
+                  <NuxtLink
                     to="/infocommande"
                     class="nav-item nav-item-nested"
-                    :class="{ 'nav-item-active': $route.path === '/infocommande' }"
+                    :class="{ 'nav-item-active': $route.path === '/infocommande'|| $route.path === '/commande'}"
                   >
                     <div class="nav-icon">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,8 +148,8 @@
                       <p class="text-white ">Commandes</p>
                       <p class="text-white text-xs opacity-70 font-medium">Suivi des ventes</p>
                     </div>
-                  </router-link>
-                  <router-link
+                  </NuxtLink>
+                  <!-- <NuxtLink
                     to="/commande"
                     class="nav-item nav-item-nested"
                     :class="{ 'nav-item-active': $route.path === '/commande' }"
@@ -168,9 +168,9 @@
                       <p class="text-white ">Commandes</p>
                       <p class="text-white text-xs opacity-70 font-medium">Enregistrer</p>
                     </div>
-                  </router-link>
+                  </NuxtLink> -->
 
-                  <router-link
+                  <!-- <NuxtLink
                     to="/facture"
                     class="nav-item nav-item-nested"
                     :class="{ 'nav-item-active': $route.path === '/facture' }"
@@ -189,8 +189,8 @@
                       <p class="text-white ">Factures</p>
                       <p class="text-white text-xs opacity-50 font-medium">Facturation client</p>
                     </div>
-                  </router-link>
-                  <NuxtLink to="/recapfacture" class="nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/recapfacture' }">
+                  </rNuxtLink> -->
+                  <NuxtLink to="/recapfacture" class="nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/recapfacture'|| $route.path === '/facture'}">
                       <div class="nav-icon">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
@@ -217,8 +217,40 @@
                         <p class="text-white ">Livraison</p>
                         <p class="text-white text-xs opacity-50 font-medium">Bordereau de livraison</p>
                       </div>
+                  </NuxtLink>
+                  <!-- <NuxtLink to="/echeance" class=" nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/echeance' }">
+                    <div class="nav-icon">
+                        <i class="fas fa-calendar-alt w-6 text-center"></i>
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-white ">Echéancier</p>
+                        <p class="text-white text-xs opacity-50 font-medium"></p>
+                      </div>
+
+                  </NuxtLink> -->
+                  <NuxtLink to="/echeanceliste" class=" nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/echeanceliste' }">
+                    <div class="nav-icon">
+                         <i class="fas fa-calendar-alt w-6 text-center"></i>
+
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-white ">Liste des écheanciers</p>
+                        <p class="text-white text-xs opacity-50 font-medium">Suivre les paiements</p>
+                      </div>
 
                   </NuxtLink>
+                  <NuxtLink to="/bilan" class=" nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/bilan' }">
+                    <div class="nav-icon">
+                        <i class="fas fa-file-invoice-dollar text-center w-6"></i>
+
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-white ">Bilan</p>
+                        <p class="text-white text-xs opacity-50 font-medium"></p>
+                      </div>
+
+                  </NuxtLink>
+
                     
           
                 </div>
@@ -239,16 +271,6 @@
         </div>
 
         <div class="flex items-center space-x-4">
-          <div class="relative hidden md:block">
-            <input
-              type="search"
-              placeholder="Rechercher..."
-              class="w-64 py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" />
-            <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round"  stroke-linejoin="round"  stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </div>
-
           <button class="relative p-2 text-gray-400 hover:text-gray-600">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -345,7 +367,7 @@ const expandedSections = ref({
 // Logout function
 const logout = () => {
   authStore.logout()
-  router.push('/login')
+  router.push('/')
   showUserMenu.value = false
 }
 
