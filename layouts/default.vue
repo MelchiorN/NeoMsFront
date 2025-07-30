@@ -228,7 +228,7 @@
                       </div>
 
                   </NuxtLink> -->
-                  <NuxtLink to="/echeanceliste" class=" nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/echeanceliste' }">
+                  <NuxtLink to="/echeanceliste" class=" nav-item nav-item-nested":class="{ 'nav-item-active': $route.path === '/echeanceliste' || $route.path==='/createecheance'}">
                     <div class="nav-icon">
                          <i class="fas fa-calendar-alt w-6 text-center"></i>
 
@@ -325,11 +325,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const router = useRouter()
-const authStore = useAuthStore()
+
 
 // State for user menu dropdown
 const showUserMenu = ref(false)
@@ -366,7 +365,6 @@ const expandedSections = ref({
 
 // Logout function
 const logout = () => {
-  authStore.logout()
   router.push('/')
   showUserMenu.value = false
 }
