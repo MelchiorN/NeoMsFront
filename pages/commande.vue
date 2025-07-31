@@ -10,8 +10,9 @@
         class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
       >
         <option value="">-- Aucune sélection --</option>
-        <option v-for="quote in quotes" :key="quote.id" :value="quote.id">
-          {{ quote.ref }} - {{ quote.clientName }}
+        <option v-for="proforma in proformaStore.proforma" :key="proforma.id" :value="proforma.id">
+      
+       {{proforma.ref}}: {{ proforma.client.last_name }} - {{ proforma.client.first_name }}
         </option>
       </select>
     </div>
@@ -71,8 +72,8 @@
 </div>
    <!-- Valider l'enregistrement -->
     <div class="flex justify-end gap-4">
-      <button @click="resetForm" class="px-4 py-2 bg-gray-200 rounded">Annuler</button>
-      <button @click="submitForm"  class="px-4 py-2 bg-blue-600 text-white rounded">
+      <button @click="" class="px-4 py-2 bg-gray-200 rounded">Annuler</button>
+      <button @click=""  class="px-4 py-2 bg-blue-600 text-white rounded">
         Enregistrer
       </button>
     </div>
@@ -81,31 +82,14 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import {useProformaStore} from '~/stores/proform'
+import { onMounted } from 'vue'
 definePageMeta({
      layout: 'default' 
 })
 
 // Test
 const quotes = ref([
-  {
-    id: 1,
-    ref: 'PF-001',
-    clientName: 'Client A',
-    deliveryDate: '2025-07-30',
-    deliveryAddress: 'Lomé, Togo',
-    items: [
-      { name: 'Produit 1', qty: 2, price: 50 },
-      { name: 'Produit 2', qty: 1, price: 100 }
-    ]
-  },
-  {
-    id: 2,
-    ref: 'PF-002',
-    clientName: 'Client B',
-    deliveryDate: '2025-08-05',
-    deliveryAddress: 'Kpalimé, Togo',
-    items: [{ name: 'Service X', qty: 3, price: 80 }]
-  }
 ])
 
 // Formulaire
@@ -116,6 +100,15 @@ const form = ref({
   notes: '',
   items: [{ name: '', qty: 1, price: 0 }]
 })
+
+//Afficher les factures proforma 
+const proformaStore = useProformaStore()
+onMounted(()=>{
+  proformaStore.fetchProforma();
+})
+
+
+
 
 //Gestion fichier
 const fileName = ref('')
@@ -130,38 +123,39 @@ const taux=18
 // Préremplissage quand une proforma est sélectionnée
 watch(selectedQuote, (newVal) => {
   if (!newVal) {
-    form.value = { deliveryDate: '', deliveryAddress: '', notes: '', items: [{ name: '', qty: 1, price: 0 }] }
+    // Si aucune proforma sélectionnée, réinitialiser
+    form.value.items = [{ name: '', qty: 1, price: 0 }]
     return
   }
-  const quote = quotes.value.find(q => q.id === parseInt(newVal))
-  if (quote) {
-    form.value.deliveryDate = quote.deliveryDate
-    form.value.deliveryAddress = quote.deliveryAddress
-    form.value.items = quote.items.map(item => ({ ...item }))
+
+  // Trouver la proforma sélectionnée
+  const proforma = proformaStore.proforma.find(p => p.id === newVal)
+
+  if (proforma) {
+    // Mapper les items reçus depuis l'API vers le format attendu par le formulaire
+    form.value.items = proforma.items.map(item => ({
+      name: item.product_name,
+      qty: item.quantity,
+      price: item.unit_price
+    }))
   }
 })
+
+
 
 // Fonctions
 const addItem = () => form.value.items.push({ name: '', qty: 1, price: 0 })
 const removeItem = (i) => form.value.items.splice(i, 1)
-const handleFileUpload = (e) => {
-  const uploadedFile = e.target.files[0]
-  if (uploadedFile) {
-    if (uploadedFile.size > 5 * 1024 * 1024) {
-      alert('Fichier trop volumineux (max 5MB)')
-      return
-    }
-    fileName.value = uploadedFile.name
-    file.value = uploadedFile
-  }
-}
+
 const removeFile = () => { fileName.value = ''; file.value = null }
 
-const resetForm = () => {
-  selectedQuote.value = ''
-  form.value = { deliveryDate: '', deliveryAddress: '', notes: '', items: [{ name: '', qty: 1, price: 0 }] }
-  fileName.value = ''
-}
+// const resetForm = () => {
+  // selectedQuote.value = ''
+//  form.value = { 
+// deliveryDate: '', deliveryAddress: '', notes: '', items: [{ name: '', qty: 1, price: 0 }] 
+// }
+  // fileName.value = ''
+// }
 
 
 

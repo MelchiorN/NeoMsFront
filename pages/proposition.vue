@@ -41,55 +41,27 @@
           <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
             <!-- Produit/Service -->
             <div class="md:col-span-2 relative">
-  <label class="block text-sm font-medium mb-1">Désignation</label>
-  <input
-    type="text"
-    v-model="item.productName"
-    @input="filterArticles(item.productName)"
-    @focus="showSuggestions = true"
-    placeholder="Nom du produit/service"
-    class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-indigo-500"
-  />
+            <label class="block text-sm font-medium mb-1">Désignation</label>
+            <input type="text" v-model="item.productName" @input="filterArticles(item.productName)" @focus="showSuggestions = true" placeholder="Nom du produit ou article"
+              class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-indigo-500"/>
 
-  <!-- Liste des suggestions -->
-  <ul
-    v-if="showSuggestions && filteredArticles.length"
-    class="absolute bg-white border border-gray-300 rounded w-full mt-1 shadow-lg z-10"
-  >
-    <li
-      v-for="article in filteredArticles"
-      :key="article.id"
-      @click="selectArticle(article, idx)"
-      class="p-2 hover:bg-indigo-100 cursor-pointer"
-    >
-      {{ article.label }} - {{ formatCurrency(article.price) }}
-    </li>
-  </ul>
-</div>
-
-
-            <!-- Quantité -->
+            <!-- Liste des suggestions -->
+            <ul v-if="showSuggestions && filteredArticles.length" class="absolute bg-white border border-gray-300 rounded w-full mt-1 shadow-lg z-10">
+              <li v-for="article in filteredArticles":key="article.id" @click="selectArticle(article, idx)"class="p-2 hover:bg-indigo-100 cursor-pointer">
+                {{ article.label }} - {{ formatCurrency(article.price) }}
+              </li>
+            </ul>
+          </div>
+          <!-- Quantité -->
             <div>
               <label class="block text-sm font-medium mb-1">Quantité</label>
-              <input
-                type="number"
-                v-model.number="item.quantity"
-                min="1"
-                required
-                class="w-full border border-gray-300 rounded p-2 text-center focus:ring-1 focus:ring-indigo-500"
-              />
+              <input type="number" v-model.number="item.quantity" min="1" required class="w-full border border-gray-300 rounded p-2 text-center focus:ring-1 focus:ring-indigo-500"/>
             </div>
 
             <!-- Prix unitaire HT -->
             <div>
               <label class="block text-sm font-medium mb-1">Prix unitaire </label>
-              <input
-                type="number"
-                v-model.number="item.unitPrice"
-                min="3500"
-                required
-                class="w-full border border-gray-300 rounded p-2 text-center focus:ring-1 focus:ring-indigo-500"
-              />
+              <input type="number" v-model.number="item.unitPrice" min="3500" required class="w-full border border-gray-300 rounded p-2 text-center focus:ring-1 focus:ring-indigo-500"/>
             </div>
 
             <!-- Total HT -->
@@ -101,12 +73,7 @@
             </div>
            <!-- Supprimer -->
             <div class="flex justify-center">
-              <button
-                type="button"
-                @click="removeItem(idx)"
-                class="text-red-600 hover:text-red-800"
-                title="Supprimer cet article"
-              >
+              <button type="button"@click="removeItem(idx)" class="text-red-600 hover:text-red-800" title="Supprimer cet article">
                 <i class="fas fa-trash text-xl"></i>
               </button>
             </div>
@@ -123,12 +90,10 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-4 pt-4 border-t border-gray-300">
-        <button
-          type="button"@click="goBack" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
+        <button type="button"@click="goBack" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
           Annuler
         </button>
-        <button
-          type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50" >
+        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50" >
           Enregistrer
         </button>
       </div>
@@ -142,23 +107,16 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-// Liste des clients (exemple)
-// const clients = ref([
-//   { id: 1, name: 'Jean Dupont', company: 'Dupont & Fils' },
-//   { id: 2, name: 'Marie Curie', company: 'InnovTech' },
-//   { id: 3, name: 'Pierre Martin', company: 'Global Solutions' },
-// ])
-
 // Données du formulaire
 const form = ref({
   clientId: '',
-  validity: '',
   notes: '',
   items: [] // { productName, description, quantity, unitPrice }
 })
 
 import {useArticleStore} from '~/stores/article'
 import {useClientStore} from '~/stores/customer'
+import { useProformaStore } from '~/stores/proform'
 import {onMounted} from 'vue'
 
 const articleStore=useArticleStore()
@@ -188,21 +146,18 @@ const selectArticle = (article, idx) => {
   showSuggestions.value = false
 }
 
+const proformaStore = useProformaStore()
+
+// Gestion de la soumission du formulaire
+const handleSubmit = async () => {
+  const response = await proformaStore.addProforma(form.value);
+  alert('Proforma créée avec succès ✅');
+    form.value = { clientId: '', items: [] }; // reset formulaire 
+};
 
 
 
 
-
-
-
-
-
-// Date minimum pour validité = demain
-const tomorrow = computed(() => {
-  const date = new Date()
-  date.setDate(date.getDate() + 1)
-  return date.toISOString().split('T')[0]
-})
 
 // Calculs totaux
 const totalHT = computed(() =>
@@ -231,14 +186,10 @@ const formatCurrency = (amount) => {
   return amount.toLocaleString('fr-FR', { style: 'currency', currency: 'XOF' })
 }
 
-// Gestion de la soumission du formulaire
-  // Ici on peut appeler une API pour enregistrer la facture proforma
-
-  // Puis rediriger vers /client
 
 
 // Retour à la page client sans enregistrer
 const goBack = () => {
-  router.push('/clients')
+  router.push('/proposition')
 }
 </script>
