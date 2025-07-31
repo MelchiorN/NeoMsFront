@@ -15,8 +15,8 @@
           class="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">-- Sélectionner un client --</option>
-          <option v-for="client in clients" :key="client.id" :value="client.id">
-            {{ client.name }} ({{ client.company }})
+          <option v-for="client in clientStore.clients" :key="client.id" :value="client.id">
+            {{ client.last_name }} {{ client.first_name }}
           </option>
         </select>
       </div>
@@ -40,16 +40,33 @@
         <div v-for="(item, idx) in form.items" :key="idx" class="border p-4 rounded mb-4 bg-gray-50">
           <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
             <!-- Produit/Service -->
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium mb-1">Désignation</label>
-              <input
-                type="text"
-                v-model="item.productName"
-                required
-                placeholder="Nom du produit/service"
-                class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-indigo-500"
-              />
-            </div>
+            <div class="md:col-span-2 relative">
+  <label class="block text-sm font-medium mb-1">Désignation</label>
+  <input
+    type="text"
+    v-model="item.productName"
+    @input="filterArticles(item.productName)"
+    @focus="showSuggestions = true"
+    placeholder="Nom du produit/service"
+    class="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-indigo-500"
+  />
+
+  <!-- Liste des suggestions -->
+  <ul
+    v-if="showSuggestions && filteredArticles.length"
+    class="absolute bg-white border border-gray-300 rounded w-full mt-1 shadow-lg z-10"
+  >
+    <li
+      v-for="article in filteredArticles"
+      :key="article.id"
+      @click="selectArticle(article, idx)"
+      class="p-2 hover:bg-indigo-100 cursor-pointer"
+    >
+      {{ article.label }} - {{ formatCurrency(article.price) }}
+    </li>
+  </ul>
+</div>
+
 
             <!-- Quantité -->
             <div>
@@ -126,11 +143,11 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 // Liste des clients (exemple)
-const clients = ref([
-  { id: 1, name: 'Jean Dupont', company: 'Dupont & Fils' },
-  { id: 2, name: 'Marie Curie', company: 'InnovTech' },
-  { id: 3, name: 'Pierre Martin', company: 'Global Solutions' },
-])
+// const clients = ref([
+//   { id: 1, name: 'Jean Dupont', company: 'Dupont & Fils' },
+//   { id: 2, name: 'Marie Curie', company: 'InnovTech' },
+//   { id: 3, name: 'Pierre Martin', company: 'Global Solutions' },
+// ])
 
 // Données du formulaire
 const form = ref({
@@ -139,6 +156,46 @@ const form = ref({
   notes: '',
   items: [] // { productName, description, quantity, unitPrice }
 })
+
+import {useArticleStore} from '~/stores/article'
+import {useClientStore} from '~/stores/customer'
+import {onMounted} from 'vue'
+
+const articleStore=useArticleStore()
+onMounted(()=>{
+  articleStore.fetchArticle();
+
+})
+const clientStore=useClientStore()
+onMounted(()=>{
+  clientStore.fetchClients();
+})
+const showSuggestions = ref(false)
+const filteredArticles = ref([])
+const filterArticles = (query) => {
+  if (!query) {
+    filteredArticles.value = []
+    return
+  }
+  filteredArticles.value = articleStore.articles.filter((a) =>
+    a.label.toLowerCase().includes(query.toLowerCase())
+  )
+}
+
+const selectArticle = (article, idx) => {
+  form.value.items[idx].productName = article.label
+  form.value.items[idx].unitPrice = article.price
+  showSuggestions.value = false
+}
+
+
+
+
+
+
+
+
+
 
 // Date minimum pour validité = demain
 const tomorrow = computed(() => {
@@ -175,25 +232,10 @@ const formatCurrency = (amount) => {
 }
 
 // Gestion de la soumission du formulaire
-const handleSubmit = () => {
-  if (!form.value.clientId) {
-    alert('Veuillez sélectionner un client.')
-    return
-  }
-  if (form.value.items.length === 0) {
-    alert('Ajoutez au moins un article.')
-    return
-  }
-  if (!form.value.validity) {
-    alert('Veuillez choisir une date de validité.')
-    return
-  }
   // Ici on peut appeler une API pour enregistrer la facture proforma
-  console.log('Facture Proforma enregistrée:', form.value)
 
   // Puis rediriger vers /client
-  router.push('/client')
-}
+
 
 // Retour à la page client sans enregistrer
 const goBack = () => {

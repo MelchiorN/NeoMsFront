@@ -51,27 +51,27 @@ const remember = ref(false)
 const router = useRouter()
 
 const handleLogin = async () => {
-  try {
-    await $fetch('http://localhost:8000/sanctum/csrf-cookie', {
-      credentials: 'include',
-    })
-    const response = await $fetch('http://localhost:8000/api/login', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'X-XSRF-TOKEN': useCookie('XSRF-TOKEN').value, // Pour Laravel Sanctum
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: {
-        email: email.value,
-        password: password.value,
-      }
-    })
-    router.push('/accueil') 
-  } catch (error) {
-    console.error(' Erreur login', error)
-    alert('Erreur de connexion')
-  }
+  // try {
+  //   await $fetch('http://localhost:8000/sanctum/csrf-cookie', {
+  //     credentials: 'include',
+  //   })
+    // const response = await $fetch('http://localhost:8000/api/login', {
+    //   method: 'POST',
+    //   credentials: 'include',
+    //   headers: {
+    //     'X-XSRF-TOKEN': useCookie('XSRF-TOKEN').value, 
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json',
+    //   },
+    //   body: {
+    //     email: email.value,
+    //     password: password.value,
+    //   }
+    // })
+   router.push('/accueil') 
+  // } catch (error) {
+  //   console.error(' Erreur login', error)
+  //   alert('Erreur de connexion')
+  // }
 }
 </script>

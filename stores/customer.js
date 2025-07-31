@@ -1,41 +1,36 @@
-import { defineStore } from 'pinia'
-
-export const useCustomerStore = defineStore('customer', {
+import { defineStore } from "pinia";
+import { useNuxtApp } from "#app";
+export const useClientStore = defineStore("client", {
   state: () => ({
-    customers: [],
     loading: false,
-    error: null
+    clients: [],
+    stat:{
+      total:0,
+      physique:0, 
+      moral:0
+    }
   }),
-
   actions: {
-    async fetchCustomers() {
-      this.loading = true
-      this.error = null
+    async fetchClients() {
       try {
-        const data = await $fetch('http://127.0.0.1:8000/api/customers')
-        this.customers = data // Adapter selon la réponse de l'API
-      } catch (err) {
-        this.error = err.message || 'Erreur lors du chargement'
-      } finally {
-        this.loading = false
+        // this.loading = true;
+        this.clients = await $fetch("http://127.0.0.1:8000/api/customers");
+
+        // this.loading = false;
+      } catch (error) {
+        console.error("Erreur lors du chargement des clients:", error);
       }
     },
+    async fetchStats(){
+      try{
+        this.stat=await $fetch('http://127.0.0.1:8000/api/customers/stats');
+      }catch(error){
+        console.error('Erreur lors du chargement des statistiques',error);
 
-    async addCustomer(payload) {
-      this.loading = true
-      this.error = null
-      try {
-        const data = await $fetch('http://127.0.0.1:8000/api/customers', {
-          method: 'POST',
-          body: payload
-        })
-        this.customers.push(data.data)
-      } catch (err) {
-        this.error = err.data?.message || 'Erreur lors de l\'ajout'
-        throw err
-      } finally {
-        this.loading = false
       }
     }
+    
   }
-})
+
+ 
+});

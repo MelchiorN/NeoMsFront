@@ -7,15 +7,16 @@
     <div class="grid grid-cols-3 gap-6">
       <div class="bg-indigo-100 p-4 rounded-xl border-l-4 border-blue-900 shadow text-center">
         <h3 class="text-lg font-semibold text-indigo-700">Total Clients</h3>
-        <p class="text-3xl font-bold">{{  }}</p>
+       
+        <p class="text-3xl font-bold">{{clientStore.stat.total}}</p>
       </div>
       <div class="bg-green-100 p-4 rounded-xl border-l-4 border-green-800 shadow text-center">
         <h3 class="text-lg font-semibold text-green-700">Clients Physiques</h3>
-        <p class="text-3xl font-bold">{{ }}</p>
+        <p class="text-3xl font-bold">{{clientStore.stat.physique}}</p>
       </div>
       <div class="bg-yellow-100 p-4 rounded-lg border-l-4 border-yellow-800 h-[100px] shadow text-center">
         <h3 class="text-lg font-semibold text-yellow-700">Clients Moraux</h3>
-        <p class="text-3xl font-bold">{{ }}</p>
+        <p class="text-3xl font-bold">{{clientStore.stat.moral}}</p>
       </div>
     </div>
 
@@ -31,18 +32,18 @@
       <table class="w-full border border-gray-300 text-sm">
         <thead class="bg-gray-200">
           <tr>
-            <th class="border p-2">Type</th>
-            <th class="border p-2">Nom/Raison Sociale</th>
-            <th class="border p-2">Email</th>
-            <th class="border p-2">Téléphone</th>
+            <th class="border border-gray-300 p-2">Nom</th>
+            <th class="border border-gray-300 p-2">Prénom</th>
+            <th class="border border-gray-300 p-2">Email</th>
+            <th class="border border-gray-300 p-2">Téléphone</th>
           </tr>
         </thead>
         <tbody>
-          <tr  class="border-t">
-            <td class="p-2">{{}}</td>
-            <td class="p-2">{{}}</td>
-            <td class="p-2">{{}}</td>
-            <td class="p-2">{{}}</td>
+          <tr v-for="client in clientStore.clients" :key='client.id' class="border-t">
+            <td class="border border-gray-300 text-center p-2">{{client.last_name}}</td>
+            <td class="border border-gray-300 text-center p-2">{{client.first_name}}</td>
+            <td class="border border-gray-300 text-center p-2">{{client.email}}</td>
+            <td class="border border-gray-300 text-center p-2">{{client.phone}}</td>
           </tr>
         </tbody>
       </table>
@@ -87,8 +88,10 @@
 
 <script setup>
 import { ref} from 'vue'
+import {useClientStore} from '~/stores/customer'
+import {onMounted} from 'vue'
 
-const clients = ref([])
+
 const showModal = ref(false)
 const newClient = ref({
   type: '',
@@ -101,11 +104,12 @@ const newClient = ref({
   phone: ''
 })
 
-const addClient = () => {
-  if (!newClient.value.type) {
-    alert('Choisissez un type de client.')
-    return
-  }
-}
+
+const clientStore = useClientStore()
+
+onMounted(() => {
+  clientStore.fetchClients() ;
+  clientStore.fetchStats();
+})
 
 </script>
