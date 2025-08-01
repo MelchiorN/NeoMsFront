@@ -32,8 +32,7 @@
         <label for="status-filter" >Filtrer par statut</label>
         <select id="status-filter" v-model="selectedStatus " class="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md  bg-indigo focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
           <option value="">Tous les status</option>
-          <option value="en cours">En cours</option>
-          <option value="en préparation">En préparation</option>
+          <option value="">En attente</option>
           <option value="livrée">Livrée</option>
           <option value="annulée">Annulée</option>
         </select>
@@ -46,27 +45,34 @@
         <table class="min-w-full border border-gray-400 rounded-lg">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center   text-gray-900 uppercase tracking-wider">ID</th>
+              <th scope="col" class="border border-gray-400 px-6 py-3 text-center   text-gray-900 uppercase tracking-wider">REF</th>
               <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Client</th>
               <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Statut</th>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Montant</th>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Livraison</th>
+              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Montant(TTC)</th>
               <th scope="col" class="border border-gray-400 relative px-6 py-3 text-center"> Actions </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="order in filteredOrders"
-              :key="order.id"
-              class="hover:bg-gray-50 transition duration-150 ease-in-out"
-            >
-              <td class="border border-gray-400 px-6 py-4  text-sm font-medium text-gray-900">{{ order.id }}</td>
-              <td class="border border-gray-400 px-6 py-4  text-[16px] text-gray-900">{{ order.client }}</td>
-              <td class="border border-gray-400 px-6 py-4 ">
-                <span :class="['px-2 inline-flex text-[16px] leading-5 font-semibold rounded-full', statusBadgeClass(order.status)]">{{ order.status }}</span>
+            <tr v-for="(order, index) in orderStore.commande"  :key="order.id" class="hover:bg-gray-50 transition duration-150 ease-in-out">
+              <td class="border border-gray-400 px-6 py-4  text-center text-sm font-medium text-gray-900">
+                {{ 'CMD ' + String(index + 1).padStart(3, '0') }}
               </td>
-              <td class="border border-gray-400 border border-gray-400 px-6 py-4  text-sm text-gray-900">{{ formatCurrency(order.amount) }}</td>
-              <td class="border border-gray-400 px-6 py-4  text-sm text-gray-900">{{ formatDate(order.delivery) }}</td>
+                <!-- <td>{{ 'CMD ' + String((currentPage - 1) * itemsPerPage + index + 1).padStart(3, '0') }}</td> -->
+              <td class="border border-gray-400 px-6 py-4  text-[16px] text-gray-900">{{order.client.last_name}} {{order.client.first_name}}</td>
+              <td class="border border-gray-400 px-6 py-4 text-center uppercase">
+                <span :class="statusClass(order.status)" class="px-2 py-1 rounded font-semibold">{{ translateStatus(order.status) }}</span>
+                <!-- <span :class="statusClass(order.status)" class="px-2 py-1 rounded font-semibold">{{ translateStatus(order.status) }}</span> -->
+                  <!-- <span>
+                      {{
+                        order.status === 'pending' ? 'En attente' : 
+                        order.status === 'canceled' ? 'Annulée' :
+                        order.status === 'delivery' ? 'Livrée' :
+                        order.status
+                      }}
+                  </span> -->
+              </td>
+
+              <td class="border border-gray-400 border border-gray-400 px-6 py-4  text-sm text-gray-900"></td>
               <td class="border border-gray-400 px-6 py-4  text-center text-[16px] font-medium">
                 <div class="flex items-center justify-center space-x-2">
                   <!-- voir -->
@@ -95,7 +101,7 @@
 
                   <!-- Bouton Supprimer -->
                   <div class="relative group">
-                    <button @click="deleteOrder(order.id)" class="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-100 transition duration-150 ease-in-out">
+                    <button @click="deleteOrder" class="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-100 transition duration-150 ease-in-out">
                       <i class="fas fa-trash-alt"></i>
                     </button>
                     <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">Supprimer</span>
@@ -103,24 +109,30 @@
                 </div>
               </td>
             </tr>
-            <tr v-if="filteredOrders.length === 0">
+            <!-- <tr v-if="filteredOrders.length === 0">
               <td colspan="6" class="text-center py-8 text-gray-500 text-lg">
                 <p>Aucune commande trouvée.</p>
                 <p class="mt-2 text-sm">Essayez d'ajuster votre recherche ou de créer une nouvelle commande.</p>
               </td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>
+    </div>
+        <!-- Pagination -->
+    <div class="flex justify-center items-center space-x-4 mt-4">
+      <button @click="prevPage" :disabled="currentPage === 1" class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50">Précédent</button>
+      <span>Page {{ currentPage }} / {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages" class="px-3 py-1 bg-gray-300 rounded disabled:opacity-50">Suivant</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-// Assurez-vous d'importer useRouter de vue-router ou useNuxtApp de Nuxt
-// Pour Nuxt 3, utilisez useRouter
 import { useRouter } from 'vue-router'
+import { useOrderStore } from '~/stores/order'
+import {onMounted} from 'vue'
 
 const router = useRouter()
 
@@ -129,69 +141,110 @@ definePageMeta({
 })
 
 const orders = ref([
-  { id: 'CMD-001', client: 'Client Alpha', status: 'en cours', amount: 250.00, delivery: '2025-07-30' },
+  // { id: 'CMD-001', client: 'Client Alpha', status: 'en cours', amount: 250.00, delivery: '2025-07-30' },
   
 ])
 
 const search = ref('')
 
+const orderStore =useOrderStore()
+onMounted(()=>{
+  orderStore.fetchOrder()
+})
+
 
 
 // Computed property pour le filtrage des commandes
-const filteredOrders = computed(() => {
-  if (!search.value) return orders.value
-  const query = search.value.toLowerCase()
-  return orders.value.filter(o =>
-    o.client.toLowerCase().includes(query) ||
-    o.id.toLowerCase().includes(query) ||
-    o.status.toLowerCase().includes(query) // Permet de rechercher par statut
-  )
-})
+// const filteredOrders = computed(() => {
+//   if (!search.value) return orders.value
+//   const query = search.value.toLowerCase()
+//   return orders.value.filter(o =>
+//     o.client.toLowerCase().includes(query) ||
+//     o.id.toLowerCase().includes(query) ||
+//     o.status.toLowerCase().includes(query) // Permet de rechercher par statut
+//   )
+// })
 
-// Fonction pour la classe CSS du statut (maintenant pour un badge)
-const statusBadgeClass = (status) => {
+// Fonction pour la classe CSS du statut 
+const statusClass = (status) => {
   switch (status) {
-    case 'en préparation':
-      return 'bg-blue-100 text-blue-800'
-    case 'en cours':
+    case 'pending':      // En attente
       return 'bg-yellow-100 text-yellow-800'
-    case 'livrée':
-      return 'bg-green-100 text-green-800'
-    case 'annulée': // Ajout d'un statut "annulée" pour l'exemple
+    case 'canceled':     // Annulée
       return 'bg-red-100 text-red-800'
+    case 'delivery':     // Livrée
+      return 'bg-green-100 text-green-800'
     default:
       return 'bg-gray-100 text-gray-800'
   }
 }
 
-// Fonctions de formatage
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  try {
-    const date = new Date(dateString);
-    // Optionnel: ajouter un jour pour corriger le décalage si la date est stockée sans timezone
-    // date.setDate(date.getDate() + 1);
-    return date.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  } catch (e) {
-    console.error("Erreur de formatage de la date:", dateString, e);
-    return dateString; // Retourne la chaîne originale si erreur
-  }
-};
 
-const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(amount)
+const translateStatus = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'En attente'
+    case 'canceled':
+      return 'Annulée'
+    case 'delivery':
+      return 'Livrée'
+    default:
+      return status
+  }
+}
+
+// Pagination
+const itemsPerPage = 3
+const currentPage = ref(1)
+
+const totalPages = computed(() => {
+  return Math.ceil(orderStore.commande.length / itemsPerPage)
+})
+const paginatedOrders = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return orderStore.commande.slice(start, start + itemsPerPage)
+})
+
+function nextPage() {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+function prevPage() {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
+
+
+// Fonctions de formatage
+// const formatDate = (dateString) => {
+//   if (!dateString) return ''
+//   try {
+//     const date = new Date(dateString);
+//     // Optionnel: ajouter un jour pour corriger le décalage si la date est stockée sans timezone
+//     // date.setDate(date.getDate() + 1);
+//     return date.toLocaleDateString('fr-FR', {
+//       year: 'numeric',
+//       month: 'long',
+//       day: 'numeric'
+//     });
+//   } catch (e) {
+//     console.error("Erreur de formatage de la date:", dateString, e);
+//     return dateString; // Retourne la chaîne originale si erreur
+//   }
+// };
+
+// const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(amount)
 
 
 
 // Fonction pour voir les détails d'une commande (peut naviguer vers une page de détail)
-const viewOrderDetails = (orderId) => {
+// const viewOrderDetails = (orderId) => {
   // Optionnel: naviguer vers une page de détail de commande
   // router.push(`/commandes/${orderId}`)
-  console.log(`Voir les détails de la commande: ${orderId}`);
-  alert(`Détails de la commande ${orderId} (à implémenter)`);
-}
+  // console.log(`Voir les détails de la commande: ${orderId}`);
+  // alert(`Détails de la commande ${orderId} (à implémenter)`);
+// }
 </script>
 

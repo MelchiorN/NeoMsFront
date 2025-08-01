@@ -119,15 +119,19 @@ import {useClientStore} from '~/stores/customer'
 import { useProformaStore } from '~/stores/proform'
 import {onMounted} from 'vue'
 
+
+//Affichage des articles(le select)
 const articleStore=useArticleStore()
 onMounted(()=>{
   articleStore.fetchArticle();
 
 })
+//Affichage des clients(le select)
 const clientStore=useClientStore()
 onMounted(()=>{
   clientStore.fetchClients();
 })
+
 const showSuggestions = ref(false)
 const filteredArticles = ref([])
 const filterArticles = (query) => {
@@ -154,6 +158,8 @@ const handleSubmit = async () => {
   alert('Proforma créée avec succès ✅');
     form.value = { clientId: '', items: [] }; // reset formulaire 
 };
+
+
 
 
 
