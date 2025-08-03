@@ -8,12 +8,13 @@
         <!-- Commande -->
          <div class="w-80 ">
           <label class="block mb-1">Choisir la commande <span class="text-red-700">*</span></label>
-          <select v-model="selectedCommande" class="text-center border border-black w-full p-2 rounded-lg">
-            <option value="">Sélectionner la commande </option>
-            <option v-for="cmd in commandes" :key="cmd.id" :value="cmd.id">
-                  {{ cmd.ref }} - {{ cmd.client }}
-            </option>
-          </select>
+          <select v-model="selectedCommande"class="text-center border border-black w-full p-2 rounded-lg">
+          <option value="">Sélectionner la commande</option>
+          <option v-for="(cmd, index) in orderStore.commande" :key="cmd.id" :value="cmd.id">
+            CMD-{{ String(index + 1).padStart(3, '0') }} - {{ cmd.client.last_name }} {{ cmd.client.first_name }}
+          </option>
+        </select>
+
         </div>
         <!-- Sélection type de facture -->
         <div class="w-80">
@@ -49,18 +50,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in form.items" :key="index">
-              <td><input v-model="item.name" class="border border-gray-300 w-full" /></td>
-              <td><input type="number" v-model.number="item.qty" class="border w-full text-center" /></td>
-              <td><input type="number" v-model.number="item.price" class="border w-full text-center" /></td>
-              <td class="text-center">{{ (item.qty * item.price).toFixed(2) }}</td>
-              <td class="text-center">
-                <button class="text-red-500" @click="removeItem(index)">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
+          <tr v-for="(item, index) in form.items" :key="index">
+            <td><input v-model="item.name" class="border border-gray-300 w-full" /></td>
+            <td><input v-model.number="item.qty" type="number" class="border w-full text-center" /></td>
+            <td><input v-model.number="item.price" type="number" class="border w-full text-center" /></td>
+            <td class="text-center">{{ (item.qty * item.price).toFixed(2) }}FCFA</td>
+            <td class="text-center">
+              <button class="text-red-500" @click="removeItem(index)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+
         </table>
         <button @click="addItem" class="mt-3 bg-blue-600 text-white px-3 py-1 rounded-lg">
           <i class="fas fa-plus"></i> Ajouter
@@ -108,28 +110,120 @@
 
     <!-- Actions -->
     <div class="flex justify-end gap-2 mt-6 border-t pt-4">
-      <button class="px-4 py-2 bg-red-500 text-white rounded-lg">Annuler</button>
-      <button class="px-4 py-2 bg-green-600 text-white rounded-lg">Enregistrer</button>
+      <button @click=""goback class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-800 hover:text-black">Annuler</button>
+      <button @click="submitInvoice" class="px-4 py-2 bg-green-600 text-white rounded-lg hove:bg-green-800 hover:text-black">Enregistrer</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useOrderStore } from '~/stores/order'
+import {useInvoiceStore} from '~/stores/invoice'
+import { onMounted } from 'vue'
+import { watch } from 'vue'
+import Swal from 'sweetalert2'
 
 definePageMeta({ layout: 'default' })
 
 const factureType = ref('')
 const form = ref({
   client: '',
-  date: '',
+ date: new Date().toISOString().slice(0, 10),
   items: [{ name: '', qty: 1, price: 0 }]
 })
 const selectedCommande = ref('')
-const commandes = ref([
-  { id: 1, ref: 'CMD-001', client: 'Client A' },
-  { id: 2, ref: 'CMD-002', client: 'Client B' }
-])
+//Avec cette fonction utiliser le  @change="loadCommandeDetails" dans le select pour surveiller son comportement
+// const loadCommandeDetails = () => {
+//   const cmd = orderStore.commande.find(c => c.id === selectedCommande.value);
+//   if (cmd && cmd.articles) {
+//     form.value.items = cmd.articles.map(article => ({
+//       name: article.label,
+//       qty: article.pivot.quantity,
+//       price: parseFloat(article.price)
+//     }));
+//   }
+// };
+
+watch(selectedCommande, (newVal) => {
+  if (!newVal) {
+    form.value.items = []
+    return
+  }
+  const cmd = orderStore.commande.find(c => c.id === newVal)
+  if (cmd && cmd.articles) {
+    form.value.items = cmd.articles.map(article => ({
+      name: article.label,
+      qty: article.pivot.quantity,
+      price: parseFloat(article.price)
+    }))
+  } else {
+    form.value.items = []
+  }
+})
+
+// Afficher les commandes passées par les clients
+const orderStore=useOrderStore()
+onMounted(()=>{
+  orderStore.fetchOrder()
+})
+
+//Valider les factures :enregistrer
+const invoiceStore=useInvoiceStore()
+const submitInvoice= async ()=>{
+  if (!selectedCommande.value || form.value.items.length === 0) {
+    Swal.fire({
+      icon:'warning',
+      title:'erreur',
+      text:'Veuilez selectionner une commande et avoir au moins un article'
+    })
+    return
+  }
+
+  const cmd = orderStore.commande.find(c => c.id === selectedCommande.value)
+  const payload={
+    clientId:cmd ? cmd.client.id : null,
+    orderId:selectedCommande.value,
+    date: form.value.date,
+    items:form.value.items.map(item=>({
+      productName:item.name,
+      quantity:item.qty,
+      unitPrice:item.price
+    })),
+    invoiceTypeId: factureType.value === 'definitive' 
+
+  }
+  try{
+    await invoiceStore.addInvoice(payload)
+   Swal.fire({
+    icon:'success',
+    title:'succès',
+    text:'Facture enregistréé avec succès',
+    time:2000,
+    showConfirmButton:false,
+
+   })
+
+    // Réinitialiser le formulaire
+  form.value = { client: '', date: '', items: [] }
+  selectedCommande.value = ''
+  factureType.value = ''
+  }catch(error){
+    Swal.fire({
+      icon:'error',
+      title:'erreur',
+      text:"Une erreur est survenue lors de l'enregistrement de votre facture"
+    })
+    console.error(error)
+  }
+}
+
+//annuler l'enregistrement
+const goback=()=>{
+  routerKey.push('/facture')
+
+}
+
 
 
 const tvaRate = ref(18)

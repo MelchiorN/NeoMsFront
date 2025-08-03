@@ -90,7 +90,7 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-4 pt-4 border-t border-gray-300">
-        <button type="button"@click="goBack" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
+        <button type="button" @click="goBack" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">
           Annuler
         </button>
         <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50" >

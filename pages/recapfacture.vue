@@ -39,20 +39,19 @@
             <th class=" border border-gray-500 px-4 py-2 text-center uppercase">Facture</th>
             <th class="border border-gray-500 px-4 py-2 text-center uppercase">Client</th>
             <th class="border border-gray-500 px-4 py-2 text-center uppercase">Montant TTC</th>
-            <th class="border border-gray-500 px-4 py-2 text-center uppercase">Statut</th>
-            <th class="border border-gray-500 px-4 py-2 text-center uppercase">Échéance</th>
+            <th class="border border-gray-500 px-4 py-2 text-center uppercase">Date</th>
             <th class="border border-gray-500 px-4 py-2 text-center uppercase">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="facture in factures" :key="facture.id" class=" bg-indigo-50 hover:bg-gray-50">
-            <td class="border border-gray-500 text-center uppercase px-4 py-2">{{ facture.ref }}</td>
-            <td class="border border-gray-500 text-center uppercase px-4 py-2">{{ facture.client }}</td>
-            <td class="border border-gray-500 text-center uppercase px-4 py-2 font-semibold">{{ formatCurrency(facture.total) }}</td>
-            <td class="border border-gray-500 text-center uppercase px-4 py-2">
+          <tr v-for="invoice in invoiceStore.facture" :key="invoice.id" class=" bg-indigo-50 hover:bg-gray-50">
+            <td class="border border-gray-500 text-center uppercase px-4 py-2">{{ invoice.ref}}</td>
+            <td class="border border-gray-500 text-center uppercase px-4 py-2">{{ invoice.client.first_name}} {{invoice.client.last_name}}</td>
+            <td class="border border-gray-500 text-center uppercase px-4 py-2 font-semibold">{{ formatCurrency(invoice.total)}}</td>
+            <td class="border border-gray-500 text-center uppercase px-4 py-2 font-semibold">{{invoice.date}}</td>
+            <!-- <td class="border border-gray-500 text-center uppercase px-4 py-2">
               <span :class="statusClass(facture.status)">{{ facture.status }}</span>
-            </td>
-            <td class="border border-gray-500 text-center uppercase  px-4 py-2">{{ formatDate(facture.dueDate) }}</td>
+            </td> -->
             <td class="border border-gray-300 px-4 py-2 text-center space-x-3 flex justify-center">
                 <!-- Voir -->
                  <div class="relative group">
@@ -62,22 +61,19 @@
                  </div>
                 <!-- Supprimer -->
                  <div class="relative group ">
-                    <button @click="deleteFacture(facture.id)" class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100 transition duration-150 ease-in-out">
+                    <button @click="deleteFacture(invoice.id)" class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100 transition duration-150 ease-in-out">
                         <i class="fas fa-trash"></i><span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">Supprimer</span>
                     </button>
                 </div>
                 <!-- Télécharger -->
                 <div class="relative group">
-                    <button @click="downloadFacture(facture.id)"class="text-green-600 hover:text-green-900 p-1 rounded-full hover:bg-green-100 transition duration-150 ease-in-out">
+                    <button @click="downloadFacture(invoice.id)"class="text-green-600 hover:text-green-900 p-1 rounded-full hover:bg-green-100 transition duration-150 ease-in-out">
                     <i class="fas fa-download"></i></button>
-            
-                    <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">Télécharger facture(pdf)</span>
+                        <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">Télécharger facture(pdf)</span>
                 </div>
             </td>
           </tr>
-          <tr v-if="factures.length === 0">
-            <td colspan="6" class="text-center py-4 text-gray-500">Aucune facture trouvée</td>
-          </tr>
+          
         </tbody>
       </table>
     </div>
@@ -89,20 +85,21 @@ definePageMeta({
   layout:'default'
 })
 import { ref, computed } from 'vue'
+import { useInvoiceStore } from '~/stores/invoice'
+import { onMounted } from 'vue'
 
-// Factures simulées
-const factures = ref([
-  { id: 1, ref: 'FAC-001', client: 'Client A', total: 250, status: 'Payée', dueDate: '2025-08-10' },
-  { id: 2, ref: 'FAC-002', client: 'Client B', total: 120, status: 'En attente', dueDate: '2025-08-15' }
-])
 
+
+
+const invoiceStore=useInvoiceStore()
+onMounted(()=> {
+  invoiceStore.fetchInvoice()
+} )
 
 
 
 
 const formatDate = (date) => new Date(date).toLocaleDateString('fr-FR')
 const formatCurrency = (amount) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(amount)
-const statusClass = (status) => {
-  return status === 'Payée' ? 'text-green-600 font-semibold' : 'text-yellow-600 font-semibold'
-}
+
 </script>
