@@ -48,7 +48,6 @@
               <th scope="col" class="border border-gray-400 px-6 py-3 text-center   text-gray-900 uppercase tracking-wider">REF</th>
               <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Client</th>
               <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Statut</th>
-              <th scope="col" class="border border-gray-400 px-6 py-3 text-center  font-medium text-gray-900 uppercase tracking-wider">Montant(TTC)</th>
               <th scope="col" class="border border-gray-400 relative px-6 py-3 text-center"> Actions </th>
             </tr>
           </thead>
@@ -72,7 +71,7 @@
                   </span> -->
               </td>
 
-              <td class="border border-gray-400 border border-gray-400 px-6 py-4  text-sm text-gray-900"></td>
+              <!-- <td class="border border-gray-400 border border-gray-400 px-6 py-4  text-sm text-gray-900"></td> -->
               <td class="border border-gray-400 px-6 py-4  text-center text-[16px] font-medium">
                 <div class="flex items-center justify-center space-x-2">
                   <!-- voir -->

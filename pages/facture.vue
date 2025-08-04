@@ -184,13 +184,16 @@ const submitInvoice= async ()=>{
   const payload={
     clientId:cmd ? cmd.client.id : null,
     orderId:selectedCommande.value,
+    invoiceType: factureType.value,
     date: form.value.date,
+    remisePercent: factureType.value === 'definitive' ? remisePercent.value : acompteRemisePercent.value,
+    acomptePercent: factureType.value === 'acompte' ? acomptePercent.value : null, // ✅ utile pour acompte
     items:form.value.items.map(item=>({
       productName:item.name,
       quantity:item.qty,
       unitPrice:item.price
     })),
-    invoiceTypeId: factureType.value === 'definitive' 
+    invoiceTypeId: factureType.value 
 
   }
   try{
@@ -208,6 +211,9 @@ const submitInvoice= async ()=>{
   form.value = { client: '', date: '', items: [] }
   selectedCommande.value = ''
   factureType.value = ''
+  remisePercent.value = 0;
+    acomptePercent.value = 0;
+    acompteRemisePercent.value = 0;
   }catch(error){
     Swal.fire({
       icon:'error',
@@ -220,7 +226,7 @@ const submitInvoice= async ()=>{
 
 //annuler l'enregistrement
 const goback=()=>{
-  routerKey.push('/facture')
+  router.push('/facture')
 
 }
 
