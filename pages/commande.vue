@@ -32,6 +32,9 @@
           </option>
         </select>
       </div>
+      <div class="">
+        <label for="">Ojet de la commande</label><input type="text" name="object" id="object" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500">
+      </div>
     </div>
 
     <!-- Ajouter fichier bon de commande -->
